@@ -21,7 +21,7 @@ export default function MainAdminNav({
         </button>
 
         <a
-          href="https://doiv.vercel.app/"
+          href="http://localhost:3000"
           target="_blank"
           rel="noopener noreferrer"
         >
