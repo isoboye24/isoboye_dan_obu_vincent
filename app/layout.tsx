@@ -9,7 +9,7 @@ import '../lib/fontawesome';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: { template: `%s | DIV`, default: APP_NAME },
+  title: { template: `%s | Isoboye Vincent Dan-Obu`, default: APP_NAME },
   description: APP_DESCRIPTION,
   metadataBase: new URL(SERVER_URL),
 };

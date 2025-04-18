@@ -15,7 +15,7 @@ model Category {
 }
 
 model Skill {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         Int       @id @default(autoincrement())
   skillName  String
   category   Category? @relation(fields: [categoryId], references: [id])
   categoryId Int?
@@ -23,7 +23,7 @@ model Skill {
 }
 
 model Project {
-  id               String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id               Int      @id @default(autoincrement())
   projectName      String
   image            Image[]
   projectThumbnail String
@@ -37,10 +37,10 @@ model Project {
 }
 
 model Image {
-  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id        Int      @id @default(autoincrement())
   caption   String?
   url       String
-  projectId String?
+  projectId Int?
   project   Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
   date      DateTime @default(now()) @db.Timestamp(6)
 }
