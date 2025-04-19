@@ -48,3 +48,24 @@ export const upsertCategory = async (
     };
   }
 };
+
+export const getAllCategory = async () => {
+  try {
+    const categories = await prisma.category.findMany({
+      orderBy: {
+        name: 'asc',
+      },
+    });
+
+    return {
+      success: true,
+      data: categories,
+    };
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return {
+      success: false,
+      message: 'Failed to fetch categories',
+    };
+  }
+};

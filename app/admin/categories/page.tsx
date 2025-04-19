@@ -9,12 +9,15 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Metadata } from 'next';
+import { getAllCategory } from '@/lib/actions/category.actions';
 
 export const metadata: Metadata = {
   title: 'List of Categories',
 };
 
-const Categories = () => {
+const Categories = async () => {
+  const categories = await getAllCategory();
+
   return (
     <div className="space-y-2">
       <div className="flex-between">
@@ -27,28 +30,28 @@ const Categories = () => {
       </div>
       <div className="mt-7">
         <Table>
-          <TableHeader>
+          <TableHeader className="text-xl">
             <TableRow>
-              <TableHead>ID</TableHead>
               <TableHead>Category</TableHead>
               <TableHead className="w-[200px]">ACTIONS</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>1</TableCell>
-              <TableCell>Web</TableCell>
-              <TableCell className="flex gap-5">
-                <a href={`/admin/categories/id`}>
-                  <Button>Edit</Button>
-                </a>
-                <a href={`/admin/categories/id`}>
-                  <Button className="bg-red-800 text-gray-200 hover:bg-red-700">
-                    Delete
-                  </Button>
-                </a>
-              </TableCell>
-            </TableRow>
+            {categories?.data?.map((category) => (
+              <TableRow key={category.id}>
+                <TableCell>{category.name}</TableCell>
+                <TableCell className="flex gap-5">
+                  <a href={`/admin/categories/${category.id}`}>
+                    <Button>Edit</Button>
+                  </a>
+                  <a href={`/admin/categories/${category.id}`}>
+                    <Button className="bg-red-800 text-gray-200 hover:bg-red-700">
+                      Delete
+                    </Button>
+                  </a>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </div>
