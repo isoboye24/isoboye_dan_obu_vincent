@@ -9,7 +9,9 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { Metadata } from 'next';
-import { getAllCategory } from '@/lib/actions/category.actions';
+import { getAllCategory, deleteCategory } from '@/lib/actions/category.actions';
+import Link from 'next/link';
+import DeleteDialog from '@/components/ui/shared/delete-dialog';
 
 export const metadata: Metadata = {
   title: 'List of Categories',
@@ -24,9 +26,9 @@ const Categories = async () => {
         <div className="flex gap-3">
           <h1 className="h2-bold text-center">List of Categories</h1>
         </div>
-        <a href="/admin/categories/create" className="">
+        <Link href="/admin/categories/create">
           <Button variant="default">Create Category</Button>
-        </a>
+        </Link>
       </div>
       <div className="mt-7">
         <Table>
@@ -41,14 +43,10 @@ const Categories = async () => {
               <TableRow key={category.id}>
                 <TableCell>{category.name}</TableCell>
                 <TableCell className="flex gap-5">
-                  <a href={`/admin/categories/${category.id}`}>
+                  <Link href={`/admin/categories/${category.id}`}>
                     <Button>Edit</Button>
-                  </a>
-                  <a href={`/admin/categories/${category.id}`}>
-                    <Button className="bg-red-800 text-gray-200 hover:bg-red-700">
-                      Delete
-                    </Button>
-                  </a>
+                  </Link>
+                  <DeleteDialog id={category.id} action={deleteCategory} />
                 </TableCell>
               </TableRow>
             ))}

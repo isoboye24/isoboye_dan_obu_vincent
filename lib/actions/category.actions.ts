@@ -2,7 +2,9 @@
 
 import { prisma } from '@/lib/prisma';
 import { upsertCategorySchema } from '@/lib/validator';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { formatError } from '../utils';
 
 export const upsertCategory = async (
   data: z.infer<typeof upsertCategorySchema>
@@ -95,3 +97,24 @@ export const getCategoryById = async (id: number) => {
     };
   }
 };
+
+export async function deleteCategory(id: number) {
+  try {
+    const categoryExists = await prisma.category.findFirst({
+      where: { id },
+    });
+
+    if (!categoryExists) throw new Error('Category not found');
+
+    await prisma.category.delete({ where: { id } });
+
+    revalidatePath('/admin/categories');
+
+    return {
+      success: true,
+      message: 'Category deleted successfully',
+    };
+  } catch (error) {
+    return { success: false, message: formatError(error) };
+  }
+}
