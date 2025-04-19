@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Form,
   FormControl,
@@ -11,50 +11,52 @@ import {
 } from '@/components/ui/form';
 import { z } from 'zod';
 import { upsertCategorySchema } from '@/lib/validator';
-import { ControllerRenderProps, SubmitHandler, useForm } from 'react-hook-form';
+import { SubmitHandler, useForm } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
-import { upsertCategory } from '@/lib/actions/category.actions'; // Unified function
-import { useSearchParams } from 'next/navigation';
+import { upsertCategory } from '@/lib/actions/category.actions';
+import { Category } from '@/types';
+import { categoryDefaultValues } from '@/lib/constants';
 
-const CategoryForm = ({ type }: { type: 'Create' | 'Update' }) => {
+const CategoryForm = ({
+  type,
+  category,
+  id,
+}: {
+  type: 'Create' | 'Update';
+  category?: Category;
+  id?: number;
+}) => {
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  // Expect the category ID in search param (for update)
 
   const form = useForm<z.infer<typeof upsertCategorySchema>>({
     resolver: zodResolver(upsertCategorySchema),
-    defaultValues: {
-      name: '',
-    },
+    defaultValues: category ? { name: category.name } : categoryDefaultValues,
   });
+
+  // Reset form values when category prop changes
+  useEffect(() => {
+    if (category && type === 'Update') {
+      console.log('Form values:', form.getValues());
+      form.reset({ name: category.name });
+    }
+  }, [category, type, form]);
 
   const onSubmit: SubmitHandler<z.infer<typeof upsertCategorySchema>> = async (
     values
   ) => {
-    if (type === 'Update') {
-      const categoryId = searchParams.get('id');
-      const payload = { ...values, id: parseInt(`${categoryId}`) };
-      const res = await upsertCategory(payload);
-      if (!res.success) {
-        toast.error(res.message);
-      } else {
-        toast.success(res.message);
-        router.push('/admin/categories');
-      }
+    const payload = { ...values, id: type === 'Update' && id ? id : undefined };
+
+    const res = await upsertCategory(payload);
+
+    if (!res.success) {
+      toast.error(res.message);
     } else {
-      const payload = { ...values };
-      const res = await upsertCategory(payload);
-      if (!res.success) {
-        toast.error(res.message);
-      } else {
-        toast.success(res.message);
-        router.push('/admin/categories');
-      }
+      toast.success(res.message);
+      router.push('/admin/categories');
     }
   };
 
@@ -71,19 +73,11 @@ const CategoryForm = ({ type }: { type: 'Create' | 'Update' }) => {
               <FormField
                 control={form.control}
                 name="name"
-                render={(field: {
-                  field: ControllerRenderProps<
-                    z.infer<typeof upsertCategorySchema>,
-                    'name'
-                  >;
-                }) => (
+                render={({ field }) => (
                   <FormItem className="w-full">
                     <FormLabel>Category Name</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter Category name"
-                        {...field.field}
-                      />
+                      <Input placeholder="Enter Category name" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

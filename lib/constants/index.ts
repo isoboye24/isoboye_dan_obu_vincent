@@ -4,3 +4,7 @@ export const APP_DESCRIPTION =
   'A personal website built with Next.js, Typescript and React';
 export const SERVER_URL =
   process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000';
+
+export const categoryDefaultValues = {
+  name: '',
+};

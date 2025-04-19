@@ -69,3 +69,29 @@ export const getAllCategory = async () => {
     };
   }
 };
+
+export const getCategoryById = async (id: number) => {
+  try {
+    const category = await prisma.category.findFirst({
+      where: { id },
+    });
+
+    if (!category) {
+      return {
+        success: false,
+        message: 'Category not found',
+      };
+    }
+
+    return {
+      success: true,
+      data: category,
+    };
+  } catch (error) {
+    console.error('Error fetching category:', error);
+    return {
+      success: false,
+      message: 'Failed to fetch category',
+    };
+  }
+};
